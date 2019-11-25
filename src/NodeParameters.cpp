@@ -18,6 +18,7 @@ void NodeParameters::retrieveParameters(const ros::NodeHandle& nodeHandle)
 	nodeHandle.param<std::string>("final_map_file_name", finalMapFileName, "map.vtk");
 	nodeHandle.param<std::string>("icp_config", icpConfig, "");
 	nodeHandle.param<std::string>("input_filters_config", inputFiltersConfig, "");
+	nodeHandle.param<std::string>("input_filters_world_config", inputFiltersWorldConfig, "");
 	nodeHandle.param<std::string>("map_post_filters_config", mapPostFiltersConfig, "");
 	nodeHandle.param<std::string>("map_update_condition", mapUpdateCondition, "overlap");
 	nodeHandle.param<float>("map_update_overlap", mapUpdateOverlap, 0.9);
@@ -83,6 +84,16 @@ void NodeParameters::validateParameters()
 		ifs.close();
 	}
 	
+	if(!inputFiltersWorldConfig.empty())
+	{
+		std::ifstream ifs(inputFiltersWorldConfig.c_str());
+		if(!ifs.good())
+		{
+			throw std::runtime_error("Invalid input filters config file: " + inputFiltersWorldConfig);
+		}
+		ifs.close();
+	}
+
 	if(!mapPostFiltersConfig.empty())
 	{
 		std::ifstream ifs(mapPostFiltersConfig.c_str());

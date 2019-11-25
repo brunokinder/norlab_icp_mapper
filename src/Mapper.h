@@ -8,6 +8,7 @@ class Mapper
 {
 private:
 	PM::DataPointsFilters inputFilters;
+	PM::DataPointsFilters inputFiltersWorld;
 	PM::DataPointsFilters mapPostFilters;
 	PM::ICPSequence icp;
 	PM::DataPoints map;
@@ -18,6 +19,7 @@ private:
 	PM::TransformationParameters lastSensorPoseWhereMapWasUpdated;
 	std::string icpConfigFilePath;
 	std::string inputFiltersConfigFilePath;
+	std::string inputFiltersWorldFilePath;
 	std::string mapPostFiltersConfigFilePath;
 	std::string mapUpdateCondition;
 	float mapUpdateOverlap;
@@ -58,7 +60,7 @@ private:
 	void convertToSphericalCoordinates(const PM::DataPoints& points, PM::Matrix& radii, PM::Matrix& angles);
 
 public:
-	Mapper(std::string icpConfigFilePath, std::string inputFiltersConfigFilePath, std::string mapPostFiltersConfigFilePath, std::string mapUpdateCondition,
+	Mapper(std::string icpConfigFilePath, std::string inputFiltersConfigFilePath, std::string inputFiltersWorldFilePath, std::string mapPostFiltersConfigFilePath, std::string mapUpdateCondition,
 		   float mapUpdateOverlap, float mapUpdateDelay, float mapUpdateDistance, float minDistNewPoint, float sensorMaxRange,
 		   float priorDynamic, float thresholdDynamic, float beamHalfAngle, float epsilonA, float epsilonD, float alpha, float beta,
 		   bool is3D, bool isOnline, bool computeProbDynamic, bool isMapping);

@@ -3,13 +3,14 @@
 #include <fstream>
 #include <chrono>
 
-Mapper::Mapper(std::string icpConfigFilePath, std::string inputFiltersConfigFilePath, std::string mapPostFiltersConfigFilePath, std::string mapUpdateCondition,
+Mapper::Mapper(std::string icpConfigFilePath, std::string inputFiltersConfigFilePath, std::string inputFiltersWorldFilePath, std::string mapPostFiltersConfigFilePath, std::string mapUpdateCondition,
 			   float mapUpdateOverlap, float mapUpdateDelay, float mapUpdateDistance, float minDistNewPoint, float sensorMaxRange,
 			   float priorDynamic, float thresholdDynamic, float beamHalfAngle, float epsilonA, float epsilonD, float alpha, float beta,
 			   bool is3D, bool isOnline, bool computeProbDynamic, bool isMapping):
 		transformation(PM::get().TransformationRegistrar.create("RigidTransformation")),
 		icpConfigFilePath(icpConfigFilePath),
 		inputFiltersConfigFilePath(inputFiltersConfigFilePath),
+		inputFiltersWorldFilePath(inputFiltersWorldFilePath),
 		mapPostFiltersConfigFilePath(mapPostFiltersConfigFilePath),
 		mapUpdateCondition(mapUpdateCondition),
 		mapUpdateOverlap(mapUpdateOverlap),
@@ -63,6 +64,13 @@ void Mapper::loadYamlConfig()
 		ifs.close();
 	}
 	
+	if(!inputFiltersWorldFilePath.empty())
+	{
+		std::ifstream ifs(inputFiltersWorldFilePath.c_str());
+		inputFiltersWorld = PM::DataPointsFilters(ifs);
+		ifs.close();
+	}
+	
 	if(!mapPostFiltersConfigFilePath.empty())
 	{
 		std::ifstream ifs(mapPostFiltersConfigFilePath.c_str());
@@ -77,7 +85,9 @@ void Mapper::processInput(PM::DataPoints& inputInSensorFrame, const PM::Transfor
 	radiusFilter->inPlaceFilter(inputInSensorFrame);
 	inputFilters.apply(inputInSensorFrame);
 	PM::DataPoints inputInMapFrame = transformation->compute(inputInSensorFrame, estimatedSensorPose);
-	
+
+	inputFiltersWorld.apply(inputInMapFrame);
+		
 	if(isMapEmpty)
 	{
 		sensorPose = estimatedSensorPose;

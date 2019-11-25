@@ -25,6 +25,7 @@ public:
 	std::string finalMapFileName;
 	std::string icpConfig;
 	std::string inputFiltersConfig;
+	std::string inputFiltersWorldConfig;
 	std::string mapPostFiltersConfig;
 	std::string mapUpdateCondition;
 	float mapUpdateOverlap;
