@@ -82,12 +82,13 @@ void Mapper::loadYamlConfig()
 void Mapper::processInput(PM::DataPoints& inputInSensorFrame, const PM::TransformationParameters& estimatedSensorPose,
 						  const std::chrono::time_point<std::chrono::steady_clock>& timeStamp)
 {
+
+    PM::DataPoints inputInMapFrame = transformation->compute(inputInSensorFrame, estimatedSensorPose);
+    inputFiltersWorld.apply(inputInMapFrame);
+
 	radiusFilter->inPlaceFilter(inputInSensorFrame);
 	inputFilters.apply(inputInSensorFrame);
-	PM::DataPoints inputInMapFrame = transformation->compute(inputInSensorFrame, estimatedSensorPose);
 
-	inputFiltersWorld.apply(inputInMapFrame);
-		
 	if(isMapEmpty)
 	{
 		sensorPose = estimatedSensorPose;
